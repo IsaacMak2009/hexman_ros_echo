@@ -1,0 +1,50 @@
+<!-- 
+xpkg_comm
+xpkg_demo
+xpkg_msgs
+xpkg_urdf_echo
+xpkg_vehicle
+ -->
+
+<!--Ctrl vehicle with ros-->
+<launch>
+    <!-- Robot Desciption -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find xpkg_urdf_echo)/urdf/model.urdf" />
+
+    <!-- Publish the robot state (TF transformations from URDF) -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" output="screen" />
+
+    <node name="xnode_comm" pkg="xpkg_comm" type="xnode_comm" output="screen" >
+        <param name="dev_list" value="false"/>
+        <param name="com_enable" value="true"/>
+        <param name="com_channel_common" value="false"/>
+        <param name="com_channel_xstd" value="true"/>
+    </node>	
+    <node name="xnode_vehicle" pkg="xpkg_vehicle" type="xnode_vehicle" output="screen" >
+        <param name="ini_path" value="$(find xpkg_vehicle)/ini/device_id_list.ini"/>
+        <param name="show_path" value="true"/>
+        <param name="show_loc" value="false"/>
+        <param name="calc_speed" value="false"/>
+        <param name="mode_can_lock" value="false"/>
+        <param name="pub_tf" value="true"/>
+        <param name="rate_x" value="1.0"/>
+        <param name="rate_y" value="1.0"/>
+        <param name="rate_z" value="1.0"/>
+        <param name="rate_az" value="1.0"/>
+    </node>
+    
+    <node name="rplidarNode" pkg="rplidar_ros"  type="rplidarNode" output="screen">
+        <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+        <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+        <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+        <param name="frame_id"            type="string" value="laser"/>
+        <param name="inverted"            type="bool"   value="false"/>
+        <param name="angle_compensate"    type="bool"   value="true"/>
+    </node>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser" 
+        args="-0.043 0 0.2 3.1415 0 0  /base_link /laser"/>
+
+    <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find xpkg_demo)/rviz/rviz_vehicle.rviz" /> -->
+</launch>

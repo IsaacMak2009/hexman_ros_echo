@@ -1,0 +1,59 @@
+<launch>
+    <!-- Include the basic chassis bringup -->
+    <!-- <include file="$(find xpkg_demo)/launch/chassis_bringup.launch" /> -->
+
+    <!-- Map server: Load a pre-saved map -->
+    <arg name="map_file" default="$(find xpkg_demo)/maps/test.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+    <!-- AMCL for localization -->
+    <node pkg="amcl" type="amcl" name="amcl" output="screen">
+        <param name="base_frame_id" value="base_link"/> <!-- Change this if you want to change your base frame id. -->
+        <param name="gui_publish_rate" value="10.0"/> <!-- 指定最大可用多大速率(Hz)扫描并发布用于可视化的路径 -->
+        <param name="kld_err" value="0.05"/>
+        <param name="kld_z" value="0.99"/>
+        <param name="laser_lambda_short" value="0.1"/>
+        <param name="laser_likelihood_max_dist" value="2.0"/>
+        <param name="laser_max_beams" value="60"/>	
+        <param name="laser_min_range" value="0.15"/>	<!-- 被考虑的最小扫描范围；默认参数-1.0，将会使用激光上报的最小扫描范围 -->
+        <param name="laser_model_type" value="likelihood_field"/>
+        <param name="laser_sigma_hit" value="0.2"/>
+        <param name="laser_z_hit" value="0.5"/>
+        <param name="laser_z_short" value="0.05"/>
+        <param name="laser_z_max" value="0.05"/>
+        <param name="laser_z_rand" value="0.5"/>
+        <!-- max_particles min_particles 是允许的粒子数量的最小值和最大值，也就是在rviz里看到的箭头数量。
+        分别对应程序里的变量min_samples和max_samples。前者默认100，后者默认5000。原则上越大，定位精度越好，但会影响占用的CPU -->
+
+        <!-- AMCL收敛速度不够快，在初值比较好的情况下，如果设置min_particles为300，max_particles为5000，重采样需要14~20次才能收敛到300个粒子。
+        如果设置得更小，收敛速度就更慢。 重采样几次时，有的粒子权重还是另一些粒子权重的三四倍。
+
+        min_particles不能太大，应该比pf_resample_limit函数返回值小，否则set_b偏大，位姿不够精确。 
+        我见过pf_resample_limit最小返回值是66，一般都大于100，所以min_particles取100即可。
+
+        max_particles不能太小，一方面难以筛选权重大的粒子，另一方面在初值不太准确时，粒子集不能有效覆盖真实初值的的周边。
+        但也不能太大，否则占用CPU上升。经过反复试验，max_particles取3000，此时AMCL占用CPU 2%左右 -->
+        <param name="max_particles" value="3000"/>
+        <param name="min_particles" value="200"/>
+        <param name="odom_alpha1" value="0.25"/> <!-- 指定由机器人运动部分的旋转分量估计的里程计旋转的期望噪声，默认0.2。增大该值，机器人发生有旋转运动时，就会出现扇形噪声粒子云 Specifies the expected noise in odometry's rotation estimate from the rotational component of the robot's motion. -->
+        <param name="odom_alpha2" value="0.25"/> <!-- 指定由机器人运动部分的平移分量估计的里程计旋转的期望噪声，默认0.2 Specifies the expected noise in odometry's rotation estimate from translational component of the robot's motion. -->
+        <param name="odom_alpha3" value="0.25"/> <!-- 指定由机器人运动部分的平移分量估计的里程计平移的期望噪声，默认0.2。纵向分量运动噪声，沿着机器人前进方向分布 Specifies the expected noise in odometry's translation estimate from the translational component of the robot's motion. -->
+        <param name="odom_alpha4" value="0.25"/> <!-- 指定由机器人运动部分的旋转分量估计的里程计平移的期望噪声，默认0.2。斜角方向上的运动噪声 Specifies the expected noise in odometry's translation estimate from the rotational component of the robot's motion. -->
+        <param name="odom_alpha5" value="0.1"/> <!-- Specifies the expected noise in odometry's translation estimate from the rotational component of the robot's motion. -->
+        <param name="odom_frame_id" value="odom"/>
+        <param name="odom_model_type" value="diff"/>
+        <param name="recovery_alpha_slow" value="0.001"/> <!-- Exponential decay rate for the slow average weight filter, used in deciding when to recover by adding random poses. -->
+        <param name="recovery_alpha_fast" value="0.1"/> <!-- Exponential decay rate for the fast average weight filter, used in deciding when to recover by adding random poses. -->
+        <param name="resample_interval" value="1"/> <!-- 在重采样前需要等待的滤波次数，默认2。越大，重采样频率越低 Number of filter updates required before resampling. -->
+        <param name="transform_tolerance" value="1.25"/> <!-- Default 0.1; time with which to post-date the transform that is published, to indicate that this transform is valid into the future. -->
+        <param name="update_min_a" value="0.2"/> <!-- Rotational movement required before performing a filter update. 0.1 represents 5.7 degrees  -->
+        <param name="update_min_d" value="0.05"/> <!-- 在执行滤波更新前平移运动的最小距离，默认0.2m，可改为0.05 Translational movement required before performing a filter update. -->
+    </node>
+
+    <!-- Move Base for navigation -->
+    <include file="$(find xpkg_demo)/launch/chassis_move_base.launch" />
+
+    <!-- RViz for visualization during navigation -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find xpkg_demo)/rviz/navigate.rviz" />
+
+</launch>

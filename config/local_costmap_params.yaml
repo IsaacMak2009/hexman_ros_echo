@@ -1,0 +1,19 @@
+local_costmap:
+  global_frame: odom      #局部代价地图的基坐标系，必须为odom
+  robot_base_frame: base_link
+  update_frequency: 5.0   # 地图更新的频率，一般为3-5Hz。
+  publish_frequency: 5.0  # before 2.0
+  static_map: false
+  rolling_window: true    # 是否使用代价地图的滚动窗口版本。在局部代价地图中，必须将此参数设置为“true”。
+  width: 3.5              # 代价地图的宽度
+  height: 3.5             # 代价地图的高度
+  resolution: 0.05        # 代价地图的分辨率，以米/单元为单位 increase to for higher res 0.025
+  transform_tolerance: 0.5 
+# local_planner 要求的实时性还是挺高的（特别是你把速度调高的时候），
+# 而local_costmap 所依赖的全局坐标系一般是odom，绘制costmap的时候会反复询问odom-》base_link 坐标系的
+# 信息，tf数据延迟要是大了会影响costmap，进而导致机器人planner实时性降低，机器人移动迟缓或者撞上障碍物。
+# 所以有个参数transform_tolerance一定要慎重
+
+  plugins:
+    - {name: obstacle_layer,      type: "costmap_2d::ObstacleLayer"} #避开障碍物图层
+    - {name: inflation_layer,     type: "costmap_2d::InflationLayer"} #膨胀障碍物图层

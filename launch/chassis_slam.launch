@@ -1,0 +1,55 @@
+<launch>
+    <!-- Include the basic chassis bringup -->
+    <!-- <include file="$(find xpkg_demo)/launch/chassis_bringup.launch" /> -->
+
+    <!-- Gmapping for SLAM -->
+   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+        <param name="base_frame" value="/base_link" /> <!--***机器人的坐标系-->
+        <param name="odom_frame" value="/odom" />   <!--***世界坐标系-->
+        <param name="map_update_interval" value="5.0"/>    <!--************地图更新之间的时间间隔（以秒为单位），两次scanmatch的间隔，地图更新也受scanmach的影响，如果scanmatch没有成功的话，是不会更新地图的,降低此数字会更频繁地更新占用网格，以增加计算负荷为代价。-->
+        
+    <!-- Set maxUrange < actual maximum range of the Laser -->
+        <param name="maxUrange" value="8.0"/> <!--激光的最大可用范围，计光束能到的范围 default80.0 --> 
+        <param name="minRange" value="-0.5"/>
+        <param name="sigma" value="0.05"/>  <!-- 用作结束点匹配-->
+        <param name="kernelSize" value="1"/>
+        <param name="lstep" value="0.05"/>  <!--机器人移动的初始值（距离）-->
+        <param name="astep" value="0.05"/>  <!--机器人移动的初始值（角度）-->
+        <param name="iterations" value="5"/><!--scanmatcher的迭代次数-->
+        <param name="lsigma" value="0.075"/><!--波束的sigma，用来计算似然估计每次扫描跳过的波束-->
+        <param name="ogain" value="3.0"/>   <!--用来平滑重采样的影响-->
+        <param name="lskip" value="0"/>     <!--为0,表示所有的激光都处理，尽可能为零，每次扫描跳过的波束评估似然的增益，用来平滑重采样的影响-->
+        <param name="minimumScore" value="50"/>
+        <!--考虑扫描匹配结果良好的最低分数。当使用有限范围（例如5m）的激光扫描仪时，可以避免在大的开放空间中跳跃姿势估计。决定对激光的一个置信度，越高说明对激光匹配算法的要求越高，激光的匹配也越容易失败转而去使用里程计数据，太低又会使地图出现大量噪声，所以需要权衡。-->
+        <param name="srr" value="0.01"/>    <!--以下四个参数是运动模型的噪声参数--><!--平移时里程误差作为平移函数0.1--> 
+        <param name="srt" value="0.02"/>    <!--平移时里程误差作为旋转函数0.2-->
+        <param name="str" value="0.01"/>    <!--旋转时里程误差作为平移函数0.1--> 
+        <param name="stt" value="0.02"/>    <!--旋转时里程误差作为旋转函数0.1-->
+        <param name="linearUpdate" value="0.7"/>    <!--机器人移动linearUpdate距离，进行scanmatch-->
+        <param name="angularUpdate" value="0.7"/>   <!--机器人选装angularUpdate角度，进行scanmatch--><!--机器人每旋转这么远处理一次扫描1-->
+        <param name="temporalUpdate" value="-0.5"/> <!--如果最新扫描处理比更新慢，则处理1次扫描，该值为负数时关闭基于时间的更新--> 
+        <param name="resampleThreshold" value="0.5"/><!--基于重采样门限的Neff--> 
+        <param name="particles" value="30"/> <!--重要! 过滤器中粒子个数80-->
+
+        <!--初始地图大小（以米为单位）-->  <!--地图初始尺寸-100,-100,100,100-->
+        <param name="xmin" value="-1.0"/>
+        <param name="ymin" value="-1.0"/>
+        <param name="xmax" value="1.0"/>
+        <param name="ymax" value="1.0"/>
+        <param name="delta" value="0.05"/>  <!--地图的分辨率（每个占用格块的米数）-->
+
+
+        <param name="llsamplerange" value="0.05"/>  <!--平移采样范围的可能性-->
+        <param name="llsamplestep" value="0.05"/>   <!--可能性的平移采样步骤-->
+        <param name="lasamplerange" value="0.005"/> <!--角度采样范围的可能性-->
+        <param name="lasamplestep" value="0.005"/>  <!--角度采样步骤的可能性-->
+        <param name="transform_publish_period" value="0.1"/><!--转换发布之间的时间间隔（以秒为单位）。要禁用广播转换，请设置为0。-->
+    </node>
+
+    <!-- Move Base for navigation -->
+    <include file="$(find xpkg_demo)/launch/chassis_move_base.launch" />
+
+    <!-- RViz for visualization during navigation -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find xpkg_demo)/rviz/slam.rviz" />
+
+</launch>

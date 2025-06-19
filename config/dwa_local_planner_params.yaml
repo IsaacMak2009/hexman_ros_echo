@@ -1,0 +1,74 @@
+# http://wiki.ros.org/base_local_planner
+
+# 恢复机制
+recovery_behavior_enabled: true  #是否启用recovery恢復機制
+clearing_rotation_allowed: false   #是否启动旋转的恢复,前提recovery_behavior_enabled開啓
+  
+DWAPlannerROS:
+# 设置机器人运动线速度（差速运动的机器人没有y向的速度，所以设置0）
+  max_vel_x: 0.4  #单位m/s
+  min_vel_x: 0.0  #由于任务3的需要，将min vel改为0.0，有需要可改回-0.3
+  max_vel_y: 0.0 
+  min_vel_y: 0.0
+
+# 设置机器人角速度 （弧度/秒）
+  max_vel_theta: 0.9
+  min_vel_theta: 0.3
+
+  max_vel_trans: 0.67     # 机器人最大平移速度的绝对值（注意：这个一定要是所有平移值里面最大的）
+  min_vel_trans: 0.1      # 当小于最小速度这时转速可忽略不计
+
+  trans_stopped_vel: 0.05 #(double, default: 0.1) 
+  theta_stopped_vel: 0.1  #(double, default: 0.1)
+# Warning!
+# 机器人被认属于“停止”状态时的平移速度。如果机器人的速度低于该值，则认为机器人已停止。
+# 不要将min_vel_trans设定为0.0，否则dwa将总是认为平移速度是不可忽略的，并且会在较小的位置产生旋转速度。
+
+
+# 加速度限定值
+  acc_lim_x: 1.0      # 最大加速度 单位：meters/sec^2
+  acc_lim_y: 0.0
+  acc_lim_theta: 3.0  # 最大角加速 单位：rad/sec^2
+
+# 目标容差参数
+  yaw_goal_tolerance: 0.3         # 达到目标时控制器在偏航/旋转中的弧度可容忍公差
+  xy_goal_tolerance: 0.15         # 达到目标时，控制器在x和y距离上的可容忍公差
+  latch_xy_goal_tolerance: false  # 设置为true时表示：如果到达容错距离内,机器人就会原地旋转；即使转动是会跑出容错距离外。
+
+# 正向模拟参数，以下的数量大小都是由计算能力决定的
+  sim_time: 2.0           # 机器人模拟以采样速度行走的时间，时间越长local_panner产生的路径也就会越长，但计算负荷越大
+  vx_samples: 10          # 探索x速度空间时要使用的样本数
+  vy_samples: 0           # 探索y速度空间时要使用的样本数.差分驱动机器人y方向永远只有1个值（0.0）
+  vtheta_samples: 20      # 旋转速度样本的数量
+  sim_granularity: 0.025  # 仿真粒度,是在轨迹上的点之间采取的步长,它意味着要多频繁的检查轨迹上的点(默认值: 0.025)
+ # angular_sim_granularity: 0.025 #以弧度为单位的步长，以给定轨迹上的角度样本之间为准
+
+# 轨迹评分参数
+  path_distance_bias: 32.0         # 本地规划器与全局路径保持一致的权重，较大的值将使本地规划器更倾向于跟踪全局路径
+  goal_distance_bias: 24.0         # 机器人尝试到达目标点的权重
+  occdist_scale: 0.05              # 机器人尝试躲避障碍物的权重，这个值偏大将导致机器人陷入困境
+  forward_point_distance: 0.325    # 将当前点与局部gobal path终点连线，并延长forward_point_distance的距离作为附加评分点
+  stop_time_buffer: 0.2            # 为了防止碰撞，机器人提前停止时间长度
+  scaling_speed: 0.25              # 机器人底盘启动的速度
+  max_scaling_factor: 0.2          # 高速度时机器人足迹的缩放程度
+
+# 振荡防止参数
+  oscillation_reset_dist: 0.05  # 机器人运动多远距离才会重置正当标志
+  oscillation_rest_angle: 0.2   #(double, default: 0.2) 重置振动标志之前机器人必须旋转的角度（弧度）
+  prune_plan: true #(bool, default: true) 
+  # 定义当机器人是否边沿着路径移动时，边抹去已经走过的路径规划。 
+  # 设置为true时，表示当机器人移动1米后，将1米之前的全局路径点一个一个清除。（包括全局的global path和局部的global path）
+
+
+# 调试 Debug
+  publish_traj_pc : true      # 可视化轨迹云和成本云
+  publish_cost_grid_pc: true  # 是否发布规划器在规划路径时的代价网格
+  global_frame_id: odom
+
+# 其他
+  use_dwa: true #(bool, default: true) 使用动态窗口方法将采样速度限制为较小的窗口
+  restore_defaults: false #(bool default: false) 恢复为原始配置
+
+  
+# 差分机器人配置，true时表示全向机器人
+  # holonomic_robot: false

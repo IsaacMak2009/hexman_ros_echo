@@ -1,0 +1,20 @@
+# Move base node parameters. For full documentation of the parameters in this file, please see
+#
+#  http://www.ros.org/wiki/move_base
+#
+
+base_global_planner: global_planner/GlobalPlanner
+base_local_planner: dwa_local_planner/DWAPlannerROS
+
+shutdown_costmaps: false  #当move_base在不活动状态时,是否关掉move_base node的costmap
+
+controller_frequency: 5.0 #向下位机控制器发送速度命令的频率(HZ),太大会占用CPU
+controller_patience: 2.0  
+
+planner_frequency: 0.5    #全局路径规划的频率，如为0则只规划一次
+planner_patience: 5.0     #规划路径最大容忍时间，以尝试在这个时间内找到有效的路径
+
+oscillation_timeout: 10.0 #执行来回运动之前允许振荡的秒数
+oscillation_distance: 0.2 #在来回运动多大距离以上不会被认为是震荡
+
+conservative_reset_dist: 0.1 #distance from an obstacle at which it will unstuck itself
