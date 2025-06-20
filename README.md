@@ -41,7 +41,7 @@ roslaunch xpkg_demo chassis_bringup.launch
 ```
 應會啟動底盤以及雷達，可用`rviz`打開`rviz/rviz_vehicle.rviz`檢查是否正確啟動
 
-> [!hint]
+> [!tip]
 > 可用以下命令透過鍵盤移動底盤
 > ```bash
 > roslaunch xpkg_demo chassis_bringup.launch
