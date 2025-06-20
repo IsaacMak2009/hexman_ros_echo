@@ -44,7 +44,7 @@ roslaunch xpkg_demo chassis_bringup.launch
 > [!tip]
 > 可用以下命令透過鍵盤移動底盤
 > ```bash
-> roslaunch xpkg_demo chassis_bringup.launch
+> roslaunch xpkg_demo chassis_key_ctrl.launch
 > ```
 
 ## 3. 導航與SLAM
