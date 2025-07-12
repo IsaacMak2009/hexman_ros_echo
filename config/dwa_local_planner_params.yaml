@@ -31,7 +31,7 @@ DWAPlannerROS:
   acc_lim_theta: 3.0  # 最大角加速 单位：rad/sec^2
 
 # 目标容差参数
-  yaw_goal_tolerance: 0.3         # 达到目标时控制器在偏航/旋转中的弧度可容忍公差
+  yaw_goal_tolerance: 0.15         # 达到目标时控制器在偏航/旋转中的弧度可容忍公差
   xy_goal_tolerance: 0.15         # 达到目标时，控制器在x和y距离上的可容忍公差
   latch_xy_goal_tolerance: false  # 设置为true时表示：如果到达容错距离内,机器人就会原地旋转；即使转动是会跑出容错距离外。
 
