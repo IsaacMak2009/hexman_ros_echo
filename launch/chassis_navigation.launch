@@ -15,7 +15,7 @@
         <param name="laser_lambda_short" value="0.1"/>
         <param name="laser_likelihood_max_dist" value="2.0"/>
         <param name="laser_max_beams" value="60"/>	
-        <param name="laser_min_range" value="0.15"/>	<!-- 被考虑的最小扫描范围；默认参数-1.0，将会使用激光上报的最小扫描范围 -->
+        <param name="laser_min_range" value="0.2"/>	<!-- 被考虑的最小扫描范围；默认参数-1.0，将会使用激光上报的最小扫描范围 -->
         <param name="laser_model_type" value="likelihood_field"/>
         <param name="laser_sigma_hit" value="0.2"/>
         <param name="laser_z_hit" value="0.5"/>
