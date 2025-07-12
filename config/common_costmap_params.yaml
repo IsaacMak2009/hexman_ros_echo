@@ -8,7 +8,7 @@ max_obstacle_height: 0.60  # assume something like an arm is mounted on top of t
 #robot_radius: 0.20  # distance a circular robot should be clear of the obstacle (kobuki: 0.18) （圆形机器人设置远离障碍物距离）
 
 # footprint: [[x0, y0], [x1, y1], ... [xn, yn]]  # if the robot is not circular（如果机器人不是圆的设置这个）
-footprint: [[-0.21, -0.21], [-0.21, 0.21], [0.21, 0.21], [0.21, -0.21]]
+footprint: [[-0.33, -0.18], [-0.33, 0.18], [0.14, 0.18], [0.14, -0.18]]
 
 map_type: costmap
 
