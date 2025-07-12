@@ -35,11 +35,19 @@ catkin_make
 
 ## 2. 啟動底盤
 
-使用本項目提供bringup包，執行以下命令後
+使用本項目提供bringup包與rplidar包，執行以下命令後
+鑑於`rplidar`和`chassis`會出現衝突，如要同時打開雷達和底盤，建議按照以下步驟執行
+
+1. 確保主機和`chassis`斷聯，並執行
+```bash
+roslaunch xpkg_demo chassis_rplidar.launch
+```
+2. 連接`chassis`，並執行
 ```bash
 roslaunch xpkg_demo chassis_bringup.launch
 ```
-應會啟動底盤以及雷達，可用`rviz`打開`rviz/rviz_vehicle.rviz`檢查是否正確啟動
+
+這應會啟動底盤以及雷達，可用rviz打開`rviz/rviz_vehicle.rviz`檢查是否正確啟動
 
 > [!tip]
 > 可用以下命令透過鍵盤移動底盤
